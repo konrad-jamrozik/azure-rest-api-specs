@@ -18,13 +18,13 @@ jobs:
         run: |
           $payload = Write-Output $env:PAYLOAD | ConvertFrom-Json -AsHashtable
           if (!$payload.comment -or !$payload.comment.body) {
-            Write-Host "Empty comment, returning..."
+            Write-Host "Skipping: empty comment."
             return
           }
           $body = $payload.comment.body.Trim().ToLowerInvariant()
           $expected = '/pr requestmerge'
           if ($body -ne $expected) {
-            Write-Host "Comment did not equal '$expected', skipping..."
+            Write-Host "Skipping: comment did not equal '$expected'."
             return
           }
           $label = 'MergeRequested'
@@ -38,10 +38,10 @@ jobs:
             gh pr edit $payload.issue.html_url --add-label "$label"
             
             if ($LASTEXITCODE -eq 0) {
-              Write-Host "Label added successfully on attempt $($retryCount+1) out of $maxRetries"
+              Write-Host "Label added successfully on attempt $($retryCount+1) out of $($maxRetries)."
               break
             } else {
-              Write-Warning "Failed to add label on attempt $($retryCount+1) out of $maxRetries"
+              Write-Warning "Failed to add label on attempt $($retryCount+1) out of $($maxRetries)."
               $retryCount++
               if ($retryCount -lt $maxRetries) {
                 # Exponential backoff in seconds: 
