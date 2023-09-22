@@ -16,7 +16,7 @@ jobs:
       - name: Process comment
         shell: pwsh
         run: |
-          $payload = echo $env:PAYLOAD | ConvertFrom-Json -AsHashtable
+          $payload = Write-Output $env:PAYLOAD | ConvertFrom-Json -AsHashtable
           if (!$payload.comment -or !$payload.comment.body) {
             Write-Host "Empty comment, returning..."
             return
@@ -34,7 +34,7 @@ jobs:
           $retryDelay = 5 # Initial retry delay in seconds
 
           while ($retryCount -lt $maxRetries) {
-            Write-Host "Attempt $($retryCount+1) out of $($maxRetries: gh pr edit $($payload.issue.number) --add-label `"$label`""
+            Write-Host "Attempt $($retryCount+1) out of $($maxRetries): gh pr edit $($payload.issue.number) --add-label `"$label`""
             gh pr edit $payload.issue.html_url --add-label "$label"
             
             if ($LASTEXITCODE -eq 0) {
@@ -57,7 +57,7 @@ jobs:
           }
 
           if ($retryCount -ge $maxRetries) {
-            Write-Error "Max retry attempts of $maxRetries exhausted. Exiting with error."
+            Write-Error "Max retry attempts of $maxRetries exhausted. Exiting with error ('exit 1')."
             exit 1
           }
         env:
