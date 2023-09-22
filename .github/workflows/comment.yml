@@ -34,6 +34,7 @@ jobs:
           $retryDelay = 5 # Initial retry delay in seconds
 
           while ($retryCount -lt $maxRetries) {
+            
             Write-Host "Attempt $($retryCount+1) out of $($maxRetries): gh pr edit $($payload.issue.number) --add-label `"$label`""
             gh pr edit $payload.issue.html_url --add-label "$label"
             
@@ -44,12 +45,12 @@ jobs:
               Write-Warning "Failed to add label on attempt $($retryCount+1) out of $($maxRetries)."
               $retryCount++
               if ($retryCount -lt $maxRetries) {
-                # Exponential backoff in seconds: 
+                # Exponential backoff in seconds:
                 #  5 =  1*5
                 # 10 =  2*5
                 # 20 =  4*5
                 # 40 =  8*5
-                $retryDelay = [math]::Pow(2, $retryCount) * $retryDelay
+                $retryDelay = $retryDelay * 2
                 Write-Host "Sleeping for $retryDelay seconds."
                 Start-Sleep -Seconds $retryDelay
               }
