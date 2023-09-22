@@ -50,9 +50,8 @@ jobs:
                 # attempt 3: 10 =  2*5
                 # attempt 4: 20 =  4*5
                 # attempt 5: 40 =  8*5
-                Write-Host "Sleeping for $retryDelay seconds..." -NoNewline
+                Write-Host "Sleeping for $retryDelay seconds..."
                 Start-Sleep -Seconds $retryDelay
-                Write-Host " done."
                 $retryDelay = $retryDelay * 2
               }
             }
